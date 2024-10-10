@@ -45,6 +45,8 @@
 
 **대체 가능**
 
+<img width="682" alt="Screenshot 2024-10-10 at 23 16 17" src="https://github.com/user-attachments/assets/74777d4d-c6c6-4775-8b5c-edca370c5559">
+
 그런데 여기까지 듣고 보면 아무 객체나 프록시가 될 수 있는 것 같다.
 
 객체에서 프록시가 되려면, 클라이언트는 서버에게 요청을 한 것인지, 프록시에게 요청을 한 것인지 조차 몰라야 한다. 
@@ -60,8 +62,10 @@
 
 그리고 서버와 프록시가 같은 인터페이스를 사용한다. 따라서 DI를 사용해서 대체 가능하다.
 
+<img width="714" alt="Screenshot 2024-10-10 at 23 16 39" src="https://github.com/user-attachments/assets/d307ad5a-1ab9-47e1-ab8d-d344a8d5706c">
 
 
+<img width="698" alt="Screenshot 2024-10-10 at 23 16 43" src="https://github.com/user-attachments/assets/37370476-e384-4b3a-8c48-872154addc46">
 
 
 이번에는 런타임 객체 의존 관계를 살펴보자. 런타임(애플리케이션 실행 시점)에 클라이언트 객체에 DI를 사용해서 `Client -> Server` 에서 `Client -> Proxy` 로 객체 의존관계를 변경해도 클라이언트 코드를 전혀 변경하지 않
