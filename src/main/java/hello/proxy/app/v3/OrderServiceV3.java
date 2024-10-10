@@ -1,14 +1,15 @@
-package hello.proxy.app.v2;
-
-import hello.proxy.app.v1.OrderRepositoryV1;
-import hello.proxy.app.v1.OrderServiceV1;
-
-public class OrderServiceV2 {
-
-    private final OrderRepositoryV2 orderRepository;
+package hello.proxy.app.v3;
 
 
-    public OrderServiceV2(OrderRepositoryV2 orderRepository) {this.orderRepository = orderRepository;}
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderServiceV3 {
+
+    private final OrderRepositoryV3 orderRepository;
+
+
+    public OrderServiceV3(OrderRepositoryV3 orderRepository) {this.orderRepository = orderRepository;}
 
 
     public void orderItem(String itemId) {
