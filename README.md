@@ -12,7 +12,11 @@
 
 클라이언트와 서버 개념에서 일반적으로 클라이언트가 서버를 직접 호출하고, 처리 결과를 직접 받는다. 이것을 직접 호출이라 한다.
 
+<img width="695" alt="Screenshot 2024-10-10 at 23 11 23" src="https://github.com/user-attachments/assets/5a52355b-b0d2-437c-bf0a-f3b8c91d195c">
 
+<img width="695" alt="Screenshot 2024-10-10 at 23 11 27" src="https://github.com/user-attachments/assets/1ce65641-b9d4-445a-8da1-7e641e706d84">
+
+<img width="705" alt="Screenshot 2024-10-10 at 23 13 22" src="https://github.com/user-attachments/assets/a7d02cce-4082-4876-ad32-d98833662a87">
 
 그런데 클라이언트가 요청한 결과를 서버에 직접 요청하는 것이 아니라 어떤 대리자를 통해서 대신 간접적으로 서버에 요청할 수 있다. 
 
