@@ -20,7 +20,7 @@ public class OrderServiceInterfaceProxy implements OrderServiceV1 {
         TraceStatus status = null;
 
         try {
-            status = logTrace.begin("OrderService.orderItem");
+            status = logTrace.begin("ProxyOrderService.orderItem");
             target.orderItem(itemId);
             logTrace.end(status);
         } catch(Exception e) {
