@@ -199,10 +199,13 @@ V1 App의 기본 클래스 의존 관계와 런타임시 객체 인스턴스 의
 
 쉽게 이야기해서 프록시 객체 안에 실제 객체가 있는 것이다.
 
+<img width="692" alt="Screenshot 2024-10-11 at 23 04 24" src="https://github.com/user-attachments/assets/58c1e723-52f6-433a-8df3-a96186e8d361">
 
 실제 객체가 스프링 빈으로 등록된다. 빈 객체의 마지막에 `@x0..` 라고 해둔 것은 인스턴스라는 뜻이다.
 
+<img width="687" alt="Screenshot 2024-10-11 at 23 04 40" src="https://github.com/user-attachments/assets/f122ed29-9fcd-4da1-a338-93a171d38812">
 
+<img width="690" alt="Screenshot 2024-10-11 at 23 04 58" src="https://github.com/user-attachments/assets/f98623c7-a951-439d-9e63-d55a331ee71e">
 
 `InterfaceProxyConfig` 를 통해 프록시를 적용한 후
 스프링 컨테이너에 프록시 객체가 등록된다. 스프링 컨테이너는 이제 실제 객체가 아니라 프록시 객체를 스프링 빈으로 관리한다.
