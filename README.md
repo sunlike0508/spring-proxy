@@ -161,12 +161,15 @@ DI를 사용하면 클라이언트 코드의 변경 없이 유연하게 프록�
 
 V1 App의 기본 클래스 의존 관계와 런타임시 객체 인스턴스 의존 관계는 다음과 같다.
 
+<img width="711" alt="Screenshot 2024-10-11 at 22 48 08" src="https://github.com/user-attachments/assets/afa693c4-1be4-47ae-b843-2be974a0878b">
+
 **V1 프록시 의존 관계 추가**
 
-
+<img width="687" alt="Screenshot 2024-10-11 at 22 49 28" src="https://github.com/user-attachments/assets/a28dea56-0938-4323-8def-8ed1416f50b7">
 
 **V1 프록시 런타임 객체 의존 관계**
 
+<img width="683" alt="Screenshot 2024-10-11 at 22 49 42" src="https://github.com/user-attachments/assets/7a683529-e400-45df-afd8-8bb2c150cc0d">
 
 그리고 애플리케이션 실행 시점에 프록시를 사용하도록 의존 관계를 설정해주어야 한다. 이 부분은 빈을 등록하는 설정 파일을 활용하면 된다. (그림에서 리포지토리는 생략했다.)
 
