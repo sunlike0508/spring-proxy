@@ -435,6 +435,8 @@ public interface MethodInterceptor extends Callback {
 
 `enhancer.create()` : 프록시를 생성한다. 앞서 설정한 `enhancer.setSuperclass(ConcreteService.class)` 에서 지정한 클래스를 상속 받아서 프록시가 만들어진다.
 
+<img width="691" alt="Screenshot 2024-10-12 at 16 35 03" src="https://github.com/user-attachments/assets/ff58f04a-1fad-4043-99bb-138e80d41ab8">
+
 **CGLIB 제약**
 
 클래스 기반 프록시는 상속을 사용하기 때문에 몇가지 제약이 있다.
