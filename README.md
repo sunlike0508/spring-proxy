@@ -395,10 +395,61 @@ JDK 동적 프록시 없이 직접 프록시를 만들어서 사용할 때와 JD
 
 <img width="680" alt="Screenshot 2024-10-12 at 15 25 56" src="https://github.com/user-attachments/assets/305358ee-208f-4124-b784-841746b0a24e">
 
+## CGLIB
+
+**Code Generator Library**
+CGLIB는 바이트코드를 조작해서 동적으로 클래스를 생성하는 기술을 제공하는 라이브러리이다.
+
+CGLIB를 사용하면 인터페이스가 없어도 구체 클래스만 가지고 동적 프록시를 만들어낼 수 있다.
+
+CGLIB는 원래는 외부 라이브러리인데, 스프링 프레임워크가 스프링 내부 소스 코드에 포함했다. 
+
+따라서 스프링 을 사용한다면 별도의 외부 라이브러리를 추가하지 않아도 사용할 수 있다.
+
+참고로 우리가 CGLIB를 직접 사용하는 경우는 거의 없다. 
+
+이후에 설명할 스프링의 `ProxyFactory` 라는 것이 이 기술을 편리하게 사용하게 도와주기 때문에, 너무 깊이있게 파기 보다는 CGLIB가 무엇인지 대략 개념만 잡으면 된다.
+
+**MethodInterceptor -CGLIB 제공** 
+
+```java
+package org.springframework.cglib.proxy;
+public interface MethodInterceptor extends Callback {
+   Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable;
+}
+```
+* `obj` : CGLIB가 적용된 객체
+* `method` : 호출된 메서드
+* `args` : 메서드를 호출하면서 전달된 인수 
+* `proxy` : 메서드 호출에 사용
+
+`Enhancer` : CGLIB는 `Enhancer` 를 사용해서 프록시를 생성한다.
+
+`enhancer.setSuperclass(ConcreteService.class)` : CGLIB는 구체 클래스를 상속 받아서 프록시 를 생성할 수 있다. 어떤 구체 클래스를 상속 받을지 지정한다.
+
+`enhancer.setCallback(new TimeMethodInterceptor(target))` : 프록시에 적용할 실행 로직을 할당한다.
+
+`enhancer.create()` : 프록시를 생성한다. 앞서 설정한 `enhancer.setSuperclass(ConcreteService.class)` 에서 지정한 클래스를 상속 받아서 프록시가 만들어진다.
 
 
 
+**CGLIB 제약**
 
+클래스 기반 프록시는 상속을 사용하기 때문에 몇가지 제약이 있다.
 
+부모 클래스의 생성자를 체크해야 한다. CGLIB는 자식 클래스를 동적으로 생성하기 때문에 기본 생성자가 필요하다.
+
+클래스에 `final` 키워드가 붙으면 상속이 불가능하다. CGLIB에서는 예외가 발생한다.
+
+메서드에 `final` 키워드가 붙으면 해당 메서드를 오버라이딩 할 수 없다. CGLIB에서는 프록시 로직이 동작하지 않는다.
+
+**참고**
+CGLIB를 사용하면 인터페이스가 없는 V2 애플리케이션에 동적 프록시를 적용할 수 있다. 
+
+그런데 지금 당장 적용 하기에는 몇가지 제약이 있다. 
+
+V2 애플리케이션에 기본 생성자를 추가하고, 의존관계를 `setter` 를 사용해서 주입하면 CGLIB를 적용할 수 있다.
+
+하지만 다음에 학습하는 `ProxyFactory` 를 통해서 CGLIB를 적용하면 이런 단점을 해결하고 또 더 편리하기 때문에, 애플리케이션에 CGLIB로 프록시를 적용하는 것은 조금 뒤에 알아보겠다.
 
 
