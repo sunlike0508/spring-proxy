@@ -387,15 +387,13 @@ JDK 동적 프록시 없이 직접 프록시를 만들어서 사용할 때와 JD
 
 **JDK 동적 프록시 도입 전 - 직접 프록시 생성**
 
+<img width="689" alt="Screenshot 2024-10-12 at 15 25 26" src="https://github.com/user-attachments/assets/e076e3e4-35dd-4aeb-a8c9-d35ca3d9a9cb">
+
 **JDK 동적 프록시 도입 후**
 
+<img width="701" alt="Screenshot 2024-10-12 at 15 25 47" src="https://github.com/user-attachments/assets/02a6f75e-beb0-46a4-847d-9c14076e87e1">
 
-
-
-
-
-
-
+<img width="680" alt="Screenshot 2024-10-12 at 15 25 56" src="https://github.com/user-attachments/assets/305358ee-208f-4124-b784-841746b0a24e">
 
 
 
