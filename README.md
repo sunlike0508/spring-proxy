@@ -395,6 +395,10 @@ JDK 동적 프록시 없이 직접 프록시를 만들어서 사용할 때와 JD
 
 <img width="680" alt="Screenshot 2024-10-12 at 15 25 56" src="https://github.com/user-attachments/assets/305358ee-208f-4124-b784-841746b0a24e">
 
+<img width="706" alt="Screenshot 2024-10-12 at 16 08 22" src="https://github.com/user-attachments/assets/4a67c320-c039-4360-a167-9d4a21c18ba0">
+
+<img width="710" alt="Screenshot 2024-10-12 at 16 08 16" src="https://github.com/user-attachments/assets/ed5d2a6a-a252-4edb-81bc-914e8c490b6f">
+
 ## CGLIB
 
 **Code Generator Library**
@@ -430,8 +434,6 @@ public interface MethodInterceptor extends Callback {
 `enhancer.setCallback(new TimeMethodInterceptor(target))` : 프록시에 적용할 실행 로직을 할당한다.
 
 `enhancer.create()` : 프록시를 생성한다. 앞서 설정한 `enhancer.setSuperclass(ConcreteService.class)` 에서 지정한 클래스를 상속 받아서 프록시가 만들어진다.
-
-
 
 **CGLIB 제약**
 
