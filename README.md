@@ -691,6 +691,7 @@ void test() {
   * 이것은 단순히 편의 메서드이고 결과적으로 해당 메서드 내부에서 지금 코드와 똑같은 다음 어드바이저가 생성된다. 
   * `DefaultPointcutAdvisor(Pointcut.TRUE, new TimeAdvice())`
 
+<img width="699" alt="Screenshot 2024-10-13 at 16 14 21" src="https://github.com/user-attachments/assets/c62ba0de-0474-4277-b022-4e46bab7bd72">
 
 
 
