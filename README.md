@@ -591,6 +591,42 @@ void test() {
 * `proxyFactory.getProxy()` : 프록시 객체를 생성하고 그 결과를 받는다.
 
 
+**proxyTargetClass 옵션**
+
+```java
+void test() {
+    ProxyFactory proxyFactory = new ProxyFactory(target);
+    proxyFactory.setProxyTargetClass(true); //중요 
+    proxyFactory.addAdvice(new TimeAdvice());
+}
+```
+
+마지막으로 인터페이스가 있지만, CGLIB를 사용해서 인터페이스가 아닌 클래스 기반으로 동적 프록시를 만드는 방법을 알아보자.
+
+프록시 팩토리는 `proxyTargetClass` 라는 옵션을 제공하는데, 이 옵션에 `true` 값을 넣으면 인터페이스가 있어도 강제로 CGLIB를 사용한다. 
+
+그리고 인터페이스가 아닌 클래스 기반의 프록시를 만들어준다.
+
+**프록시 팩토리의 기술 선택 방법**
+
+* 대상에 인터페이스가 있으면: JDK 동적 프록시, 인터페이스 기반 프록시
+* 대상에 인터페이스가 없으면: CGLIB, 구체 클래스 기반 프록시
+* `proxyTargetClass=true` : CGLIB, 구체 클래스 기반 프록시, 인터페이스 여부와 상관없음
+
+**정리**
+
+프록시 팩토리의 서비스 추상화 덕분에 구체적인 CGLIB, JDK 동적 프록시 기술에 의존하지 않고, 매우 편리하게 동적 프록시를 생성할 수 있다.
+
+프록시의 부가 기능 로직도 특정 기술에 종속적이지 않게 `Advice` 하나로 편리하게 사용할 수 있었다. 
+
+이것은 프록시 팩토리가 내부에서 JDK 동적 프록시인 경우 `InvocationHandler` 가 `Advice` 를 호출하도록 개발해두고, CGLIB인 경우 `MethodInterceptor` 가 `Advice` 를 호출하도록 기능을 개발해두었기 때문이다.
+
+**참고**
+스프링 부트는 AOP를 적용할 때 기본적으로 `proxyTargetClass=true` 로 설정해서 사용한다. 
+
+따라서 인터페이스가 있어도 항상 CGLIB를 사용해서 구체 클래스를 기반으로 프록시를 생성한다. 자세한 이유는 강의 뒷 부분에서 설명한다.
+
+## 포인트컷, 어드바이스, 어드바이저
 
 
 
