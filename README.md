@@ -654,8 +654,7 @@ void test() {
 
 둘을 합치면 어드바이저가 된다. 스프링의 어드바이저는 하나의 포인트컷 + 하나의 어드바이스로 구성된다.
 
-
-
+<img width="707" alt="Screenshot 2024-10-13 at 15 51 39" src="https://github.com/user-attachments/assets/9946309a-a9d2-4248-b47f-15f5a479c19a">
 
 
 
