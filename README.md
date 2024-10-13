@@ -722,13 +722,14 @@ public interface MethodMatcher {
 
 일반적으로 스프링이 이미 만들어둔 구현체를 사용하지만 개념 학습 차원에서 간단히 직접 구현해보자.
 
-
+<img width="710" alt="Screenshot 2024-10-13 at 16 22 31" src="https://github.com/user-attachments/assets/c7671401-2231-4df0-a3f4-ce9a20354afb">
 
 1. 클라이언트가 프록시의 `save()` 를 호출한다.
 2. 포인트컷에 `Service` 클래스의 `save()` 메서드에 어드바이스를 적용해도 될지 물어본다.
 3. 포인트컷이 `true` 를 반환한다. 따라서 어드바이스를 호출해서 부가 기능을 적용한다.
 4. 이후 실제 인스턴스의 `save()` 를 호출한다.
 
+<img width="708" alt="Screenshot 2024-10-13 at 16 24 57" src="https://github.com/user-attachments/assets/049a22cc-4664-4c64-ad31-82f75e408c1d">
 
 1. 클라이언트가 프록시의 `find()` 를 호출한다.
 2. 포인트컷에 `Service` 클래스의 `find()` 메서드에 어드바이스를 적용해도 될지 물어본다.
