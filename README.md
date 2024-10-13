@@ -784,7 +784,7 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 
 지금 떠오르는 방법은 프록시를 여러게 만들면 될 것 같다.
 
-
+<img width="695" alt="Screenshot 2024-10-13 at 16 40 08" src="https://github.com/user-attachments/assets/319282cd-9646-43f9-9363-2ac597c05192">
 
 **여러 프록시의 문제**
 
@@ -794,7 +794,7 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 
 **하나의 프록시, 여러 어드바이저**
 
-
+<img width="691" alt="Screenshot 2024-10-13 at 16 49 50" src="https://github.com/user-attachments/assets/ef2046a6-b804-4afb-b82b-1462eed50677">
 
 스프링은 이 문제를 해결하기 위해 하나의 프록시에 여러 어드바이저를 적용할 수 있게 만들어두었다.
 
