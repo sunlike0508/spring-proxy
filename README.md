@@ -478,6 +478,9 @@ V2 애플리케이션에 기본 생성자를 추가하고, 의존관계를 `sett
 
 프록시 팩토리는 인터페이스가 있으면 JDK 동적 프록시를 사용하고, 구체 클래스만 있다면 CGLIB를 사용한다. 그리고 이 설정을 변경할 수도 있다.
 
+<img width="700" alt="Screenshot 2024-10-13 at 15 17 50" src="https://github.com/user-attachments/assets/cb7b85dd-163b-4bd3-8fa3-34f1fbc781ad">
+
+<img width="700" alt="Screenshot 2024-10-13 at 15 17 50" src="https://github.com/user-attachments/assets/cb7b85dd-163b-4bd3-8fa3-34f1fbc781ad">
 
 **Q: 두 기술을 함께 사용할 때 부가 기능을 적용하기 위해 JDK 동적 프록시가 제공하는 InvocationHandler와 CGLIB가 제공하는 MethodInterceptor를 각각 중복으로 따로 만들어야 할까?**
 
@@ -489,6 +492,9 @@ V2 애플리케이션에 기본 생성자를 추가하고, 의존관계를 `sett
 
 프록시 팩토리를 사용하면 `Advice` 를 호출하는 전용 `InvocationHandler` , `MethodInterceptor` 를 내부에서 사용한다.
 
+<img width="694" alt="Screenshot 2024-10-13 at 15 18 33" src="https://github.com/user-attachments/assets/75e06958-2e6d-4459-a6cc-36ffbac78d58">
+
+<img width="699" alt="Screenshot 2024-10-13 at 15 18 38" src="https://github.com/user-attachments/assets/cb4a4835-21bd-435d-8672-519c570d2b95">
 
 **Q: 특정 조건에 맞을 때 프록시 로직을 적용하는 기능도 공통으로 제공되었으면?**
 
