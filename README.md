@@ -693,12 +693,47 @@ void test() {
 
 <img width="699" alt="Screenshot 2024-10-13 at 16 14 21" src="https://github.com/user-attachments/assets/c62ba0de-0474-4277-b022-4e46bab7bd72">
 
+### 예제2
+
+이번에는 `save()` 메서드에는 어드바이스 로직을 적용하지만, `find()` 메서드에는 어드바이스 로직을 적용하지 않도록 해보자.
+
+물론 과거에 했던 코드와 유사하게 어드바이스에 로직을 추가해서 메서드 이름을 보고 코드를 실행할지 말지 분기를 타도 된다. 
+
+하지만 이런 기능에 특화되어서 제공되는 것이 바로 포인트컷이다.
+
+**Pointcut 관련 인터페이스 - 스프링 제공**
+
+```java
+public interface Pointcut {
+     ClassFilter getClassFilter();
+     MethodMatcher getMethodMatcher();
+}
+public interface ClassFilter {
+     boolean matches(Class<?> clazz);
+}
+public interface MethodMatcher {
+     boolean matches(Method method, Class<?> targetClass);
+}
+```
+
+포인트컷은 크게 `ClassFilter` 와 `MethodMatcher` 둘로 이루어진다. 
+
+이름 그대로 하나는 클래스가 맞는지, 하나 는 메서드가 맞는지 확인할 때 사용한다. 둘다 `true` 로 반환해야 어드바이스를 적용할 수 있다.
+
+일반적으로 스프링이 이미 만들어둔 구현체를 사용하지만 개념 학습 차원에서 간단히 직접 구현해보자.
 
 
 
+1. 클라이언트가 프록시의 `save()` 를 호출한다.
+2. 포인트컷에 `Service` 클래스의 `save()` 메서드에 어드바이스를 적용해도 될지 물어본다.
+3. 포인트컷이 `true` 를 반환한다. 따라서 어드바이스를 호출해서 부가 기능을 적용한다.
+4. 이후 실제 인스턴스의 `save()` 를 호출한다.
 
 
-
+1. 클라이언트가 프록시의 `find()` 를 호출한다.
+2. 포인트컷에 `Service` 클래스의 `find()` 메서드에 어드바이스를 적용해도 될지 물어본다.
+3. 포인트컷이 `false` 를 반환한다. 따라서 어드바이스를 호출하지 않고, 부가 기능도 적용되지 않는다.
+4. 실제 인스턴스를 호출한다.
 
 
 
