@@ -13,6 +13,7 @@ import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 
 @Slf4j
 class AdvisorTest {
@@ -38,6 +39,25 @@ class AdvisorTest {
         ProxyFactory proxyFactory = new ProxyFactory(target);
 
         DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor(new MyPointcut(), new TimeAdvice());
+        proxyFactory.addAdvisor(defaultPointcutAdvisor);
+
+        ServiceInterface proxy = (ServiceInterface) proxyFactory.getProxy();
+
+        proxy.save();
+        proxy.find();
+    }
+
+
+    @Test
+    void test3() {
+        ServiceInterface target = new ServiceImpl();
+
+        ProxyFactory proxyFactory = new ProxyFactory(target);
+
+        NameMatchMethodPointcut nameMatchMethodPointcut = new NameMatchMethodPointcut();
+        nameMatchMethodPointcut.setMappedName("save");
+
+        DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor(nameMatchMethodPointcut, new TimeAdvice());
         proxyFactory.addAdvisor(defaultPointcutAdvisor);
 
         ServiceInterface proxy = (ServiceInterface) proxyFactory.getProxy();

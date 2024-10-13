@@ -735,13 +735,67 @@ public interface MethodMatcher {
 3. 포인트컷이 `false` 를 반환한다. 따라서 어드바이스를 호출하지 않고, 부가 기능도 적용되지 않는다.
 4. 실제 인스턴스를 호출한다.
 
+### 예제 코드3 - 스프링이 제공하는 포인트컷
+
+```java
+void advisorTest3() {
+     ServiceImpl target = new ServiceImpl();
+     ProxyFactory proxyFactory = new ProxyFactory(target);
+     NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+     pointcut.setMappedNames("save");
+     DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pointcut, new TimeAdvice());
+     proxyFactory.addAdvisor(advisor);
+     ServiceInterface proxy = (ServiceInterface) proxyFactory.getProxy();
+     proxy.save();
+     proxy.find();
+}
+```
+
+**스프링이 제공하는 포인트컷**
+
+스프링은 무수히 많은 포인트컷을 제공한다. 대표적인 몇가지만 알아보자.
+
+* `NameMatchMethodPointcut` : 메서드 이름을 기반으로 매칭한다. 내부에서는 `PatternMatchUtils` 를 사용한다. 
+  * 예) `*xxx*` 허용
+* `JdkRegexpMethodPointcut` : JDK 정규 표현식을 기반으로 포인트컷을 매칭한다.
+* `TruePointcut` : 항상 참을 반환한다. 
+* `AnnotationMatchingPointcut` : 애노테이션으로 매칭한다. 
+* `AspectJExpressionPointcut` : aspectJ 표현식으로 매칭한다.
+
+**가장 중요한 것은 aspectJ 표현식**
+
+여기에서 사실 다른 것은 중요하지 않다. 
+
+실무에서는 사용하기도 편리하고 기능도 가장 많은 aspectJ 표현식을 기반으 로 사용하는 `AspectJExpressionPointcut` 을 사용하게 된다.
+
+aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 자세히 설명하겠다.
+
+지금은 `Pointcut` 의 동작 방식과 전체 구조에 집중하자.
+
+### 예제 코드4 - 여러 어드바이저 함께 적용
+
+
+어드바이저는 하나의 포인트컷과 하나의 어드바이스를 가지고 있다.
+
+만약 여러 어드바이저를 하나의 `target` 에 적용하려면 어떻게 해야할까?
+
+쉽게 이야기해서 하나의 `target` 에 여러 어드바이스를 적용하려면 어떻게 해야할까?
+
+지금 떠오르는 방법은 프록시를 여러게 만들면 될 것 같다.
 
 
 
+**여러 프록시의 문제**
+
+이 방법이 잘못된 것은 아니지만, 프록시를 2번 생성해야 한다는 문제가 있다. 
+
+만약 적용해야 하는 어드바이저가 10개 라면 10개의 프록시를 생성해야한다.
+
+**하나의 프록시, 여러 어드바이저**
 
 
 
-
+스프링은 이 문제를 해결하기 위해 하나의 프록시에 여러 어드바이저를 적용할 수 있게 만들어두었다.
 
 
 
