@@ -37,6 +37,28 @@ class MultiAdvisorTest {
         proxy2.find();
     }
 
+
+    @Test
+    void test2() {
+
+        DefaultPointcutAdvisor
+                advisor1 = new DefaultPointcutAdvisor(Pointcut.TRUE, new Advice1());
+        DefaultPointcutAdvisor
+                advisor2 = new DefaultPointcutAdvisor(Pointcut.TRUE, new Advice2());
+
+        ServiceInterface target = new ServiceImpl();
+
+        ProxyFactory proxyFactory1 = new ProxyFactory(target);
+        proxyFactory1.addAdvisor(advisor2);
+        proxyFactory1.addAdvisor(advisor1);
+
+        ServiceInterface proxy1 = (ServiceInterface) proxyFactory1.getProxy();
+
+        proxy1.save();
+        proxy1.find();
+    }
+
+
     static class Advice1 implements MethodInterceptor {
 
         @Override
