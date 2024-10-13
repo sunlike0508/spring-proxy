@@ -813,6 +813,8 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 }
 ```
 
+<img width="693" alt="Screenshot 2024-10-13 at 16 55 30" src="https://github.com/user-attachments/assets/f0ae1d38-c798-4ee4-a0fb-a0950a376197">
+
 프록시 팩토리에 원하는 만큼 `addAdvisor()` 를 통해서 어드바이저를 등록하면 된다.
 
 등록하는 순서대로 `advisor` 가 호출된다. 여기서는 `advisor2` , `advisor1` 순서로 등록했다.
