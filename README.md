@@ -875,10 +875,11 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 
 # 빈 후처리기
 
+<img width="691" alt="Screenshot 2024-10-14 at 22 08 42" src="https://github.com/user-attachments/assets/b1cb04ee-e1e4-48a3-8d70-a7ce38243c19">
+
 `@Bean` 이나 컴포넌트 스캔으로 스프링 빈을 등록하면, 스프링은 대상 객체를 생성하고 스프링 컨테이너 내부의 빈 저장소에 등록한다. 
 
 그리고 이후에는 스프링 컨테이너를 통해 등록한 스프링 빈을 조회해서 사용하면 된다.
-
 
 **빈 후처리기 - BeanPostProcessor**
 
@@ -894,6 +895,7 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 
 **빈 후처리기 과정**
 
+<img width="691" alt="Screenshot 2024-10-14 at 22 09 39" src="https://github.com/user-attachments/assets/006f6038-82b5-4a5e-bc60-83a75462945a">
 
 **빈 등록 과정을 빈 후처리기와 함께 살펴보자**
 
@@ -902,6 +904,7 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 * 3. 후 처리 작업: 빈 후처리기는 전달된 스프링 빈 객체를 조작하거나 다른 객체로 바뀌치기 할 수 있다.
 * 4. 등록: 빈 후처리기는 빈을 반환한다. 전달 된 빈을 그대로 반환하면 해당 빈이 등록되고, 바꿔치기 하면 다른 객 체가 빈 저장소에 등록된다.
 
+<img width="689" alt="Screenshot 2024-10-14 at 22 10 34" src="https://github.com/user-attachments/assets/808c103a-bf1a-495c-abd4-da3317ed1af1">
 
 
 
