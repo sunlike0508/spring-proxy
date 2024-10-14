@@ -1175,6 +1175,7 @@ implementation 'org.springframework.boot:spring-boot-starter-aop'
 **생성된 프록시**
 
 <img width="692" alt="Screenshot 2024-10-14 at 23 09 09" src="https://github.com/user-attachments/assets/af69fed9-9ad6-413c-a1b2-dee165959147">
+
 ```java
 @Configuration
 @Import({AppV1Config.class, AppV2Config.class})
