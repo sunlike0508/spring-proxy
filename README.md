@@ -1157,6 +1157,7 @@ implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 **자동 프록시 생성기의 작동 과정 - 그림**
 
+<img width="690" alt="Screenshot 2024-10-14 at 23 06 28" src="https://github.com/user-attachments/assets/3945ef18-f061-4413-85ee-11085f7b5546">
 
 **자동 프록시 생성기의 작동 과정을 알아보자**
 
@@ -1173,9 +1174,7 @@ implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 **생성된 프록시**
 
-
-
-
+<img width="692" alt="Screenshot 2024-10-14 at 23 09 09" src="https://github.com/user-attachments/assets/af69fed9-9ad6-413c-a1b2-dee165959147">
 ```java
 @Configuration
 @Import({AppV1Config.class, AppV2Config.class})
@@ -1199,7 +1198,6 @@ public class AutoProxyConfig {
 빈 후처리기는 이제 등록하지 않아도 된다. 
 
 스프링은 자동 프록시 생성기라는 ( `AnnotationAwareAspectJAutoProxyCreator` ) 빈 후처리기를 자동으로 등록해준다.
-
 
 ### 중요: 포인트컷은 2가지에 사용된다.
 
