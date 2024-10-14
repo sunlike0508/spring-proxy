@@ -899,31 +899,226 @@ aspectJ 표현식과 사용방법은 중요해서 이후 AOP를 설명할 때 �
 
 **빈 등록 과정을 빈 후처리기와 함께 살펴보자**
 
+<img width="689" alt="Screenshot 2024-10-14 at 22 10 34" src="https://github.com/user-attachments/assets/808c103a-bf1a-495c-abd4-da3317ed1af1">
+
 * 1. 생성: 스프링 빈 대상이 되는 객체를 생성한다. ( `@Bean` , 컴포넌트 스캔 모두 포함)
 * 2. 전달: 생성된 객체를 빈 저장소에 등록하기 직전에 빈 후처리기에 전달한다.
 * 3. 후 처리 작업: 빈 후처리기는 전달된 스프링 빈 객체를 조작하거나 다른 객체로 바뀌치기 할 수 있다.
 * 4. 등록: 빈 후처리기는 빈을 반환한다. 전달 된 빈을 그대로 반환하면 해당 빈이 등록되고, 바꿔치기 하면 다른 객 체가 빈 저장소에 등록된다.
 
-<img width="689" alt="Screenshot 2024-10-14 at 22 10 34" src="https://github.com/user-attachments/assets/808c103a-bf1a-495c-abd4-da3317ed1af1">
+**BeanPostProcessor 인터페이스 - 스프링 제공** 
+
+```java
+public interface BeanPostProcessor {
+    Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException;
+    Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException;
+}
+```
+빈 후처리기를 사용하려면 `BeanPostProcessor` 인터페이스를 구현하고, 스프링 빈으로 등록하면 된다. 
+
+`postProcessBeforeInitialization` : 객체 생성 이후에 `@PostConstruct` 같은 초기화가 발생하기 전에 호출되는 포스트 프로세서이다.
+
+`postProcessAfterInitialization` : 객체 생성 이후에 `@PostConstruct` 같은 초기화가 발생한 다음에 호출되는 포스트 프로세서이다.
+
+**정리**
+
+빈 후처리기는 빈을 조작하고 변경할 수 있는 후킹 포인트이다.
+
+이것은 빈 객체를 조작하거나 심지어 다른 객체로 바꾸어 버릴 수 있을 정도로 막강하다.
+
+여기서 조작이라는 것은 해당 객체의 특정 메서드를 호출하는 것을 뜻한다.
+
+일반적으로 스프링 컨테이너가 등록하는, 특히 컴포넌트 스캔의 대상이 되는 빈들은 중간에 조작할 방법이 없는데, 빈 후처리기를 사용하면 개발자가 등록하는 모든 빈을 중간에 조작할 수 있다. 
+
+이 말은 **빈 객체를 프록시로 교체**하는 것도 가능하다는 뜻이다.
+
+**참고 - @PostConstruct의 비밀**
+
+`@PostConstruct` 는 스프링 빈 생성 이후에 빈을 초기화 하는 역할을 한다. 
+
+그런데 생각해보면 빈의 초기화 라는 것이 단순히 `@PostConstruct` 애노테이션이 붙은 초기화 메서드를 한번 호출만 하면 된다. 
+
+쉽게 이야기해서 생성된 빈을 한번 조작하는 것이다.
+
+따라서 빈을 조작하는 행위를 하는 적절한 빈 후처리기가 있으면 될 것 같다.
+
+스프링은 `CommonAnnotationBeanPostProcessor` 라는 빈 후처리기를 자동으로 등록하는데, 여기에서 `@PostConstruct` 애노테이션이 붙은 메서드를 호출한다. 
+
+따라서 스프링 스스로도 스프링 내부의 기능을 확장 하기 위해 빈 후처리기를 사용한다.
+
+## 빈 후처리기 - 적용
+
+빈 후처리기를 사용해서 실제 객체 대신 프록시를 스프링 빈으로 등록해보자.
+
+이렇게 하면 수동으로 등록하는 빈은 물론이고, 컴포넌트 스캔을 사용하는 빈까지 모두 프록시를 적용할 수 있다. 
+
+더 나아가서 설정 파일에 있는 수 많은 프록시 생성 코드도 한번에 제거할 수 있다.
+
+```java
+public class PackageLogTracePostProcessor implements BeanPostProcessor {
+
+    private final String basePackage;
+    private final Advisor advisor;
+
+    public PackageLogTracePostProcessor(String basePackage, Advisor advisor) {
+        this.basePackage = basePackage;
+        this.advisor = advisor;
+    }
 
 
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        log.info("bean, beanName {} {}", bean, beanName.getClass());
 
+        String packageName = bean.getClass().getPackageName();
 
+        if(!packageName.startsWith(basePackage)) {
+            return bean;
+        } else {
+            ProxyFactory proxyFactory = new ProxyFactory(bean);
+            proxyFactory.addAdvisor(advisor);
+            //proxyFactory.setProxyTargetClass(true);
 
+            Object proxy = proxyFactory.getProxy();
 
+            log.info("proxy {}", proxy.getClass());
 
+            return proxyFactory.getProxy();
+        }
+    }
+}
+```
 
+`PackageLogTraceProxyPostProcessor` 는 원본 객체를 프록시 객체로 변환하는 역할을 한다. 
 
+이때 프록시 팩토리를 사용하는데, 프록시 팩토리는 `advisor` 가 필요하기 때문에 이 부분은 외부에서 주입 받도록 했다. 
 
+모든 스프링 빈들에 프록시를 적용할 필요는 없다. 
 
+여기서는 특정 패키지와 그 하위에 위치한 스프링 빈들만 프록 시를 적용한다. 여기서는 `hello.proxy.app` 과 관련된 부분에만 적용하면 된다. 
 
+다른 패키지의 객체들은 원본 객체를 그대로 반환한다.
 
+프록시 적용 대상의 반환 값을 보면 원본 객체 대신에 프록시 객체를 반환한다. 
 
+따라서 스프링 컨테이너에 원본 객 체 대신에 프록시 객체가 스프링 빈으로 등록된다. 원본 객체는 스프링 빈으로 등록되지 않는다.
 
+```java
+@Configuration
+@Import({AppV1Config.class, AppV2Config.class})
+public class BeanPostProcessConfig {
 
+    @Bean
+    public PackageLogTracePostProcessor packageLogTracePostProcessor(LogTrace logTrace) {
 
+        return new PackageLogTracePostProcessor("hello.proxy.app", getAdvisor(logTrace));
+    }
 
+    private Advisor getAdvisor(LogTrace logTrace) {
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedNames("request*", "order*", "save*");
 
+        LogTraceAdvice ad = new LogTraceAdvice(logTrace);
+
+        return new DefaultPointcutAdvisor(pointcut, ad);
+    }
+}
+```
+* `@Import({AppV1Config.class, AppV2Config.class})` : V3는 컴포넌트 스캔으로 자동으로 스프링 빈으로 등록되지만, V1, V2 애플리케이션은 수동으로 스프링 빈으로 등록해야 동작한다. 
+
+* `ProxyApplication` 에서 등록해도 되지만 편의상 여기에 등록하자.
+
+* `@Bean logTraceProxyPostProcessor()` : 특정 패키지를 기준으로 프록시를 생성하는 빈 후처리기를 스프링 빈으로 등록한다. 빈 후처리기는 스프링 빈으로만 등록하면 자동으로 동작한다. 여기에 프록시를 적용할 패 키지 정보( `hello.proxy.app` )와 어드바이저( `getAdvisor(logTrace)` )를 넘겨준다.
+* 
+이제 **프록시를 생성하는 코드가 설정 파일에는 필요 없다.** 
+
+순수한 빈 등록만 고민하면 된다. 
+
+프록시를 생성하고 프 록시를 스프링 빈으로 등록하는 것은 빈 후처리기가 모두 처리해준다.
+
+실행해보면 스프링 부트가 기본으로 등록하는 수 많은 빈들이 빈 후처리기를 통과하는 것을 확인할 수 있다. 
+
+여기에 모두 프록시를 적용하는 것은 올바르지 않다. 
+
+꼭 필요한 곳에만 프록시를 적용해야 한다. 
+
+여기서는 `basePackage` 를 사용해서 v1~v3 애플리케이션 관련 빈들만 프록시 적용 대상이 되도록 했다.
+
+**v1:** 인터페이스가 있으므로 JDK 동적 프록시가 적용된다.
+
+**v2:** 구체 클래스만 있으므로 CGLIB 프록시가 적용된다.
+
+**v3:** 구체 클래스만 있으므로 CGLIB 프록시가 적용된다.
+
+**컴포넌트 스캔에도 적용**
+
+여기서 중요한 포인트는 v1, v2와 같이 수동으로 등록한 빈 뿐만 아니라 컴포넌트 스캔을 통해 등록한 v3 빈들도 프록 시를 적용할 수 있다는 점이다. 
+
+이것은 모두 빈 후처리기 덕분이다.
+
+**프록시 적용 대상 여부 체크**
+
+애플리케이션을 실행해서 로그를 확인해보면 알겠지만, 우리가 직접 등록한 스프링 빈들 뿐만 아니라 스프링 부트 가 기본으로 등록하는 수 많은 빈들이 빈 후처리기에 넘어온다. 
+
+그래서 어떤 빈을 프록시로 만들 것인지 기준이 필요하다.
+
+여기서는 간단히 `basePackage` 를 사용해서 특정 패키지를 기준으로 해당 패키지와 그 하위 패키지의 빈들을 프록시로 만든다.
+
+스프링 부트가 기본으로 제공하는 빈 중에는 프록시 객체를 만들 수 없는 빈들도 있다. 
+
+따라서 모든 객체를 프록시로 만들 경우 오류가 발생한다.
+
+## 빈 후처리기 - 정리
+
+**문제1 - 너무 많은 설정**
+
+프록시를 직접 스프링 빈으로 등록하는 `ProxyFactoryConfigV1` , `ProxyFactoryConfigV2` 와 같은 설정 파일은 프록시 관련 설정이 지나치게 많다는 문제가 있다.
+
+예를 들어서 애플리케이션에 스프링 빈이 100개가 있다면 여기에 프록시를 통해 부가 기능을 적용하려면 100개의 프록시 설정 코드가 들어가야 한다. 
+
+무수히 많은 설정 파일 때문에 설정 지옥을 경험하게 될 것이다.
+
+스프링 빈을 편리하게 등록하려고 컴포넌트 스캔까지 사용하는데, 이렇게 직접 등록하는 것도 모자라서, 프록시를 적용 하는 코드까지 빈 생성 코드에 넣어야 했다.
+
+**문제2 - 컴포넌트 스캔**
+
+애플리케이션 V3처럼 컴포넌트 스캔을 사용하는 경우 지금까지 학습한 방법으로는 프록시 적용이 불가능했다. 
+
+왜냐하면 컴포넌트 스캔으로 이미 스프링 컨테이너에 실제 객체를 스프링 빈으로 등록을 다 해버린 상태이기 때문이다. 
+
+좀 더 풀어서 설명하자면, 지금까지 학습한 방식으로 프록시를 적용하려면, 원본 객체를 스프링 컨테이너에 빈으로 등록 하는 것이 아니라 `ProxyFactoryConfigV1` 에서 한 것 처럼, 프록시를 원본 객체 대신 스프링 컨테이너에 빈으로 등록해야 한다. 
+
+그런데 컴포넌트 스캔은 원본 객체를 스프링 빈으로 자동으로 등록하기 때문에 프록시 적용이 불가능하다.
+
+**문제 해결**
+
+빈 후처리기 덕분에 프록시를 생성하는 부분을 하나로 집중할 수 있다. 
+
+그리고 컴포넌트 스캔처럼 스프링이 직접 대상을 빈으로 등록하는 경우에도 중간에 빈 등록 과정을 가로채서 원본 대신에 프록시를 스프링 빈으로 등록할 수 있다. 
+
+덕분에 애플리케이션에 수 많은 스프링 빈이 추가되어도 프록시와 관련된 코드는 전혀 변경하지 않아도 된다. 
+
+그리고 컴포넌트 스캔을 사용해도 프록시가 모두 적용된다.
+
+**하지만 개발자의 욕심은 끝이 없다.**
+
+스프링은 프록시를 생성하기 위한 빈 후처리기를 이미 만들어서 제공한다.
+
+**중요**
+프록시의 적용 대상 여부를 여기서는 간단히 패키지를 기준으로 설정했다. 
+
+그런데 잘 생각해보면 포인트컷을 사용하면 더 깔끔할 것 같다.
+
+포인트컷은 이미 클래스, 메서드 단위의 필터 기능을 가지고 있기 때문에, 프록시 적용 대상 여부를 정밀하게 설정 할 수 있다.
+
+참고로 어드바이저는 포인트컷을 가지고 있다. 따라서 어드바이저를 통해 포인트컷을 확인할 수 있다.
+
+뒤에서 학습하겠지만 스프링 AOP는 포인트컷을 사용해서 프록시 적용 대상 여부를 체크한다.
+
+결과적으로 포인트컷은 다음 두 곳에 사용된다.
+
+1. 프록시 적용 대상 여부를 체크해서 꼭 필요한 곳에만 프록시를 적용한다.(빈 후처리기-자동 프록시 생성)
+2. 프록시의 어떤 메서드가 호출 되었을 때 어드바이스를 적용할 지 판단한다. (프록시 내부)
 
 
 
