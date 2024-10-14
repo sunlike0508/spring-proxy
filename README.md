@@ -1326,11 +1326,8 @@ execution(* hello.proxy.app..*(..)) && !execution(* hello.proxy.app..noLog(..))
 
 **이후에 설명할 스프링 AOP도 동일한 방식으로 동작한다.**
 
-<img width="686" alt="Screenshot 2024-10-14 at 23 25 56" src="https://github.com/user-attachments/assets/652998fb-8df1-42d9-abcd-02147420fa9a">
-
-
-<img width="687" alt="Screenshot 2024-10-14 at 23 26 03" src="https://github.com/user-attachments/assets/32cd0e8a-d110-497c-8b48-76a246f52781">
 <img width="686" alt="Screenshot 2024-10-14 at 23 25 56" src="https://github.com/user-attachments/assets/cf4f8e32-44a3-4cf9-ac02-5223f6df5157">
+<img width="687" alt="Screenshot 2024-10-14 at 23 26 03" src="https://github.com/user-attachments/assets/32cd0e8a-d110-497c-8b48-76a246f52781">
 
 **정리**
 
