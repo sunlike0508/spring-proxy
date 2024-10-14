@@ -948,6 +948,8 @@ public interface BeanPostProcessor {
 
 ## 빈 후처리기 - 적용
 
+<img width="692" alt="Screenshot 2024-10-14 at 22 26 17" src="https://github.com/user-attachments/assets/c8f75692-33bc-42bb-a111-b0de6d64b0b5">
+
 빈 후처리기를 사용해서 실제 객체 대신 프록시를 스프링 빈으로 등록해보자.
 
 이렇게 하면 수동으로 등록하는 빈은 물론이고, 컴포넌트 스캔을 사용하는 빈까지 모두 프록시를 적용할 수 있다. 
