@@ -8,6 +8,7 @@ import hello.proxy.config.v4_postprocessor.posrtprocessor.PackageLogTracePostPro
 import hello.proxy.trace.logtrace.LogTrace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.Advisor;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +21,32 @@ import org.springframework.context.annotation.Import;
 public class AutoProxyConfig {
 
 
-    @Bean
+    //@Bean
     public Advisor advisor1(LogTrace logTrace) {
         NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
         pointcut.setMappedNames("request*", "order*", "save*");
+
+        LogTraceAdvice ad = new LogTraceAdvice(logTrace);
+
+        return new DefaultPointcutAdvisor(pointcut, ad);
+    }
+
+    //@Bean
+    public Advisor advisor2(LogTrace logTrace) {
+
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* hello.proxy.app..*(..))");
+
+        LogTraceAdvice ad = new LogTraceAdvice(logTrace);
+
+        return new DefaultPointcutAdvisor(pointcut, ad);
+    }
+
+    @Bean
+    public Advisor advisor3(LogTrace logTrace) {
+
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* hello.proxy.app..*(..)) && !execution(* hello.proxy.app..noLog(..))");
 
         LogTraceAdvice ad = new LogTraceAdvice(logTrace);
 

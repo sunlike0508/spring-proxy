@@ -1232,15 +1232,112 @@ public class AutoProxyConfig {
 
 그래서 자동 프록시 생성기는 모든 스프링 빈에 프록시를 적용하는 것이 아니라 포인트컷으로 한번 필터링해서 어드바이스가 사용될 가능성이 있는 곳에만 프록시를 생성한다.
 
+## 스프링이 제공하는 빈 후처리기2
+
+**애플리케이션 로딩 로그**
+
+```shell
+EnableWebMvcConfiguration.requestMappingHandlerAdapter()
+EnableWebMvcConfiguration.requestMappingHandlerAdapter() time=63ms
+```
+
+애플리케이션 서버를 실행해보면, 스프링이 초기화 되면서 기대하지 않은 이러한 로그들이 올라온다. 
+
+그 이유는 지금 사용한 포인트컷이 단순히 메서드 이름에 `"request*", "order*", "save*"` 만 포함되어 있으면 매칭 된다고 판단하기 때문이다.
+
+결국 스프링이 내부에서 사용하는 빈에도 메서드 이름에 `request` 라는 단어만 들어가 있으면 프록시가 만들어지고 되고, 어드바이스도 적용되는 것이다.
+
+결론적으로 패키지에 메서드 이름까지 함께 지정할 수 있는 매우 정밀한 포인트컷이 필요하다.
+
+**AspectJExpressionPointcut**
+
+AspectJ라는 AOP에 특화된 포인트컷 표현식을 적용할 수 있다. 
+
+AspectJ 포인트컷 표현식과 AOP는 조금 뒤에 자세 히 설명하겠다. 지금은 특별한 표현식으로 복잡한 포인트컷을 만들 수 있구나 라고 대략 이해하면 된다.
+
+**AutoProxyConfig - advisor2 추가** 
+
+```java
+@Bean
+public Advisor advisor2(LogTrace logTrace) {
+  AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+  pointcut.setExpression("execution(* hello.proxy.app..*(..))");
+  LogTraceAdvice advice = new LogTraceAdvice(logTrace);
+  //advisor = pointcut + advice
+  return new DefaultPointcutAdvisor(pointcut, advice);
+}
+```
+
+
+* `AspectJExpressionPointcut` : AspectJ 포인트컷 표현식을 적용할 수 있다.
+
+* `execution(* hello.proxy.app..*(..))` : AspectJ가 제공하는 포인트컷 표현식이다. 이후 자세히 설명하겠다. 지금은 간단히 알아보자.
+  * `*` : 모든 반환 타입
+  * `hello.proxy.app..` : 해당 패키지와 그 하위 패키지 
+  * `*(..)` : `*` 모든 메서드 이름, `(..)` 파라미터는 상관 없음
+  
+쉽게 이야기해서 `hello.proxy.app` 패키지와 그 하위 패키지의 모든 메서드는 포인트컷의 매칭 대상이 된다.
+
+그런데 문제는 이 부분에 로그가 출력된다. `advisor2` 에서는 단순히 `package` 를 기준으로 포인트컷 매칭을 했기 때문이다.
+
+**AutoProxyConfig advisor3 추가** 
+
+```java
+@Bean
+public Advisor advisor3(LogTrace logTrace) {
+  AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+  pointcut.setExpression("execution(* hello.proxy.app..*(..)) && !execution(* hello.proxy.app..noLog(..))");
+  LogTraceAdvice advice = new LogTraceAdvice(logTrace);
+  //advisor = pointcut + advice
+  return new DefaultPointcutAdvisor(pointcut, advice);
+}
+```
+**주의**
+
+`advisor1` , `advisor2 ` 에 있는 `@Bean` 은 꼭 주석처리해주어야 한다. 그렇지 않으면 어드바이저가 중복 등록된다.
+
+**표현식을 다음과 같이 수정했다.**
+
+```
+execution(* hello.proxy.app..*(..)) && !execution(* hello.proxy.app..noLog(..))
+```
+
+`&&` : 두 조건을 모두 만족해야 함 `!` : 반대
+
+`hello.proxy.app` 패키지와 하위 패키지의 모든 메서드는 포인트컷에 매칭하되, `noLog()` 메서드는 제외하라는 뜻이다.
+
+
+## 하나의 프록시 여러 Advisor 적용
+
+예를 들어서 어떤 스프링 빈이 `advisor1` , `advisor2` 가 제공하는 포인트컷의 조건을 모두 만족하면 프록시 자동 생성기는 프록시를 몇 개 생성할까?
+
+프록시 자동 생성기는 프록시를 하나만 생성한다. 
+
+왜냐하면 프록시 팩토리가 생성하는 프록시는 내부에 여러 `advisor` 들을 포함할 수 있기 때문이다. 따라서 프록시를 여러 개 생성해서 비용을 낭비할 이유가 없다.
+
+
+**프록시 자동 생성기 상황별 정리**
+
+`advisor1` 의 포인트컷만 만족 프록시1개 생성, 프록시에 `advisor1` 만 포함
+
+`advisor1` , `advisor2` 의 포인트컷을 모두 만족 프록시1개 생성, 프록시에 `advisor1` , `advisor2` 모두 포함
+
+`advisor1` , `advisor2` 의 포인트컷을 모두 만족하지 않음 프록시가 생성되지 않음
+
+**이후에 설명할 스프링 AOP도 동일한 방식으로 동작한다.**
 
 
 
 
+**정리**
 
+자동 프록시 생성기인 `AnnotationAwareAspectJAutoProxyCreator` 덕분에 개발자는 매우 편리하게 프록시 를 적용할 수 있다. 
 
+이제 `Advisor` 만 스프링 빈으로 등록하면 된다.
 
+`Advisor` = `Pointcut` + `Advice`
 
-
+다음 시간에는 `@Aspect` 애노테이션을 사용해서 더 편리하게 포인트컷과 어드바이스를 만들고 프록시를 적용해보자.
 
 
 
