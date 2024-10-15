@@ -1414,7 +1414,7 @@ public class LogTraceAspect {
 
 **자동 프록시 생성기는 2가지 일을 한다.**
 
-
+<img width="684" alt="Screenshot 2024-10-15 at 22 53 04" src="https://github.com/user-attachments/assets/f694b8f0-1157-42c4-9639-8976e6178698">
 
 1. `@Aspect` 를 보고 어드바이저( `Advisor` )로 변환해서 저장한다. 
 2. 어드바이저를 기반으로 프록시를 생성한다.
@@ -1422,6 +1422,8 @@ public class LogTraceAspect {
 ### 1. `@Aspect` 를 어드바이저로 변환해서 저장하는 과정
 
 **@Aspect를 어드바이저로 변환해서 저장하는 과정을 알아보자**
+
+<img width="686" alt="Screenshot 2024-10-15 at 22 54 27" src="https://github.com/user-attachments/assets/d2716d6f-4cdb-490b-9b44-4e0f8a066e69">
 
 1. 실행: 스프링 애플리케이션 로딩 시점에 자동 프록시 생성기를 호출한다.
 2. 모든 @Aspect 빈 조회: 자동 프록시 생성기는 스프링 컨테이너에서 `@Aspect` 애노테이션이 붙은 스프링 빈 을 모두 조회한다.
@@ -1439,6 +1441,8 @@ public class LogTraceAspect {
 캐시에 어드바이저가 이미 만들어져 있는 경우 캐시에 저장된 어드바이저를 반환 한다.
 
 ### 2. 어드바이저를 기반으로 프록시 생성
+
+<img width="682" alt="Screenshot 2024-10-15 at 22 55 46" src="https://github.com/user-attachments/assets/bd8cfaab-098a-42c6-a4c5-a4c72882e867">
 
 **자동 프록시 생성기의 작동 과정을 알아보자**
 1. 생성: 스프링 빈 대상이 되는 객체를 생성한다. ( `@Bean` , 컴포넌트 스캔 모두 포함)
@@ -1466,6 +1470,7 @@ public class LogTraceAspect {
 
 우리가 지금까지 진행한 방법이 이렇게 여러곳에 걸쳐 있는 횡단 관심사의 문제를 해결하는 방법이었다.
 
+<img width="699" alt="Screenshot 2024-10-15 at 22 58 14" src="https://github.com/user-attachments/assets/84644839-bfa7-4281-8005-fed5f120a862">
 
 지금까지 프록시를 사용해서 이러한 횡단 관심사를 어떻게 해결하는지 점진적으로 매우 깊이있게 학습하고 기반을 다져 두었다.
 
